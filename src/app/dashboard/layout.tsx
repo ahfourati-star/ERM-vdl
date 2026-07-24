@@ -26,6 +26,18 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <Link href="/dashboard" className="font-medium text-foreground/80 hover:text-primary">
               Accueil
             </Link>
+            <Link
+              href="/dashboard/risks"
+              className="font-medium text-foreground/80 hover:text-primary"
+            >
+              Risques
+            </Link>
+            <Link
+              href="/dashboard/matrix"
+              className="font-medium text-foreground/80 hover:text-primary"
+            >
+              Matrice
+            </Link>
             {membership.role === "ADMIN" && (
               <Link
                 href="/dashboard/invite"

@@ -19,6 +19,12 @@ enum InvitationStatus {
   EXPIRED
 }
 
+enum RiskStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
+
 model Organization {
   id        String   @id @default(cuid())
   name      String
@@ -27,6 +33,7 @@ model Organization {
 
   memberships Membership[]
   invitations Invitation[]
+  risks       Risk[]
 }
 
 model Profile {
@@ -50,6 +57,8 @@ model Membership {
   profileId String
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
+  ownedRisks Risk[]
+
   @@unique([orgId, profileId])
 }
 
@@ -65,6 +74,35 @@ model Invitation {
 
   orgId String
   organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+}
+
+model Risk {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  category    String?
+  process     String?
+  status      RiskStatus @default(OPEN)
+
+  inherentProbability Int
+  inherentImpact      Int
+  residualProbability Int
+  residualImpact      Int
+  targetProbability   Int
+  targetImpact        Int
+
+  exposureAmount Decimal? @db.Decimal(14, 2)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orgId String
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  ownerMembershipId String?
+  ownerMembership   Membership? @relation(fields: [ownerMembershipId], references: [id], onDelete: SetNull)
 
   @@index([orgId])
 }
