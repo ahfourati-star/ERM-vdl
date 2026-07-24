@@ -7,21 +7,30 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const { membership } = await requireMembership();
 
   return (
-    <div className="min-h-screen">
-      <header className="border-b">
+    <div className="min-h-screen bg-muted/30">
+      <header className="border-b bg-card">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-          <div>
-            <p className="font-semibold">{membership.organization.name}</p>
-            <p className="text-xs text-muted-foreground">
-              {membership.profile.email} · {membership.role === "ADMIN" ? "Administrateur" : "Membre"}
-            </p>
+          <div className="flex items-center gap-3">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
+              {membership.organization.name.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <p className="font-semibold">{membership.organization.name}</p>
+              <p className="text-xs text-muted-foreground">
+                {membership.profile.email} ·{" "}
+                {membership.role === "ADMIN" ? "Administrateur" : "Membre"}
+              </p>
+            </div>
           </div>
           <nav className="flex items-center gap-4 text-sm">
-            <Link href="/dashboard" className="hover:underline">
+            <Link href="/dashboard" className="font-medium text-foreground/80 hover:text-primary">
               Accueil
             </Link>
             {membership.role === "ADMIN" && (
-              <Link href="/dashboard/invite" className="hover:underline">
+              <Link
+                href="/dashboard/invite"
+                className="font-medium text-foreground/80 hover:text-primary"
+              >
                 Inviter un collègue
               </Link>
             )}
