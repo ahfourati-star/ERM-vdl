@@ -16,7 +16,7 @@ export default async function RisksPage() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="canvas space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Registre des risques</h1>
@@ -70,7 +70,8 @@ export default async function RisksPage() {
                     </td>
                     <td className="px-4 py-2">
                       <span
-                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${level.className}`}
+                        className="rounded-full px-2 py-0.5 text-xs font-medium"
+                        style={{ background: level.fill, color: "#333" }}
                       >
                         {level.label} ({score})
                       </span>

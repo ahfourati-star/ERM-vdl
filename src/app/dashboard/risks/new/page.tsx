@@ -18,7 +18,7 @@ export default async function NewRiskPage({
   });
 
   return (
-    <div className="space-y-6">
+    <div className="canvas space-y-6">
       <h1 className="text-2xl font-semibold">Ajouter un risque</h1>
       <Card>
         <CardHeader>

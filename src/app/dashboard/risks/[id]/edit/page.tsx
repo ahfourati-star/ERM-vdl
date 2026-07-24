@@ -25,7 +25,7 @@ export default async function EditRiskPage({
   });
 
   return (
-    <div className="space-y-6">
+    <div className="canvas space-y-6">
       <h1 className="text-2xl font-semibold">Modifier le risque</h1>
       <Card>
         <CardHeader>

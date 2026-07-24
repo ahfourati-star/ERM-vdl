@@ -46,7 +46,8 @@ export default async function MatrixPage() {
               return (
                 <div
                   key={`${cell.probability}-${cell.impact}`}
-                  className={`flex h-20 flex-col items-center justify-center rounded-lg ${level.className}`}
+                  className="flex h-20 flex-col items-center justify-center rounded-lg"
+                  style={{ background: level.fill, color: "#333" }}
                   title={cell.risks.map((r) => r.title).join(", ")}
                 >
                   <span className="text-lg font-bold">{cell.risks.length}</span>

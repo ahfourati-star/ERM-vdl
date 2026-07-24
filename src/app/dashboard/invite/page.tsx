@@ -24,7 +24,7 @@ export default async function InvitePage({
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
   return (
-    <div className="space-y-6">
+    <div className="canvas space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Inviter un collègue</h1>
         <p className="text-muted-foreground">

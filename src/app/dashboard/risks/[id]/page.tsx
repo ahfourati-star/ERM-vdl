@@ -27,7 +27,10 @@ function ScoreBox({ label, probability, impact }: { label: string; probability: 
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className="text-sm">
         {probability} × {impact} ={" "}
-        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${level.className}`}>
+        <span
+          className="rounded-full px-2 py-0.5 text-xs font-medium"
+          style={{ background: level.fill, color: "#333" }}
+        >
           {level.label} ({score})
         </span>
       </p>
@@ -61,7 +64,7 @@ export default async function RiskDetailPage({ params }: { params: Promise<{ id:
   const addAction = createActionPlan.bind(null, risk.id);
 
   return (
-    <div className="space-y-6">
+    <div className="canvas space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">{risk.title}</h1>

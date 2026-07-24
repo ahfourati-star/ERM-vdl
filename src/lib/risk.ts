@@ -1,9 +1,13 @@
+// Level thresholds and colors mirror the reference dashboard exactly:
+// score = probability × impact; Faible ≤4, Moyen 5-9, Élevé 10-14, Critique 15-25.
 export const RISK_LEVELS = [
-  { key: "FAIBLE", label: "Faible", min: 1, max: 4, className: "bg-emerald-100 text-emerald-800" },
-  { key: "MOYEN", label: "Moyen", min: 5, max: 9, className: "bg-amber-100 text-amber-800" },
-  { key: "ELEVE", label: "Élevé", min: 10, max: 15, className: "bg-orange-100 text-orange-800" },
-  { key: "CRITIQUE", label: "Critique", min: 16, max: 25, className: "bg-red-100 text-red-800" },
+  { key: "FAIBLE", label: "Faible", min: 1, max: 4, solid: "#63BE7B", fill: "#C6EFCE" },
+  { key: "MOYEN", label: "Moyen", min: 5, max: 9, solid: "#F2C94C", fill: "#FFEB9C" },
+  { key: "ELEVE", label: "Élevé", min: 10, max: 14, solid: "#EE8B34", fill: "#FCD5B4" },
+  { key: "CRITIQUE", label: "Critique", min: 15, max: 25, solid: "#E15759", fill: "#FFC7CE" },
 ] as const;
+
+export const LEVEL_ORDER = ["Faible", "Moyen", "Élevé", "Critique"] as const;
 
 export function criticality(probability: number, impact: number) {
   return probability * impact;
@@ -11,6 +15,13 @@ export function criticality(probability: number, impact: number) {
 
 export function levelFor(score: number) {
   return RISK_LEVELS.find((l) => score >= l.min && score <= l.max) ?? RISK_LEVELS[0];
+}
+
+export function fmtEuro(n: number) {
+  n = Number(n) || 0;
+  if (n >= 1e6) return (n / 1e6).toFixed(1).replace(".", ",") + " M€";
+  if (n >= 1e3) return Math.round(n / 1e3) + " k€";
+  return n + " €";
 }
 
 export const SCALE = [1, 2, 3, 4, 5];
