@@ -25,6 +25,18 @@ enum RiskStatus {
   CLOSED
 }
 
+enum ControlType {
+  PREVENTIVE
+  DETECTIVE
+  CORRECTIVE
+}
+
+enum ActionStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  DONE
+}
+
 model Organization {
   id        String   @id @default(cuid())
   name      String
@@ -34,6 +46,8 @@ model Organization {
   memberships Membership[]
   invitations Invitation[]
   risks       Risk[]
+  controls    Control[]
+  actionPlans ActionPlan[]
 }
 
 model Profile {
@@ -57,7 +71,8 @@ model Membership {
   profileId String
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
-  ownedRisks Risk[]
+  ownedRisks       Risk[]
+  ownedActionPlans ActionPlan[]
 
   @@unique([orgId, profileId])
 }
@@ -104,5 +119,47 @@ model Risk {
   ownerMembershipId String?
   ownerMembership   Membership? @relation(fields: [ownerMembershipId], references: [id], onDelete: SetNull)
 
+  controls    Control[]
+  actionPlans ActionPlan[]
+
   @@index([orgId])
+}
+
+model Control {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  type        ControlType @default(PREVENTIVE)
+  efficacy    Int         @default(3)
+  createdAt   DateTime    @default(now())
+
+  orgId String
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  riskId String
+  risk   Risk @relation(fields: [riskId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+  @@index([riskId])
+}
+
+model ActionPlan {
+  id              String       @id @default(cuid())
+  title           String
+  status          ActionStatus @default(NOT_STARTED)
+  percentComplete Int          @default(0)
+  dueDate         DateTime?
+  createdAt       DateTime     @default(now())
+
+  orgId String
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  riskId String
+  risk   Risk @relation(fields: [riskId], references: [id], onDelete: Cascade)
+
+  ownerMembershipId String?
+  ownerMembership   Membership? @relation(fields: [ownerMembershipId], references: [id], onDelete: SetNull)
+
+  @@index([orgId])
+  @@index([riskId])
 }

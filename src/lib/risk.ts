@@ -20,3 +20,15 @@ export const STATUS_LABELS: Record<string, string> = {
   IN_PROGRESS: "En cours",
   CLOSED: "Fermé",
 };
+
+export const CONTROL_TYPE_LABELS: Record<string, string> = {
+  PREVENTIVE: "Préventif",
+  DETECTIVE: "Détectif",
+  CORRECTIVE: "Correctif",
+};
+
+export const ACTION_STATUS_LABELS: Record<string, string> = {
+  NOT_STARTED: "Non démarré",
+  IN_PROGRESS: "En cours",
+  DONE: "Terminé",
+};

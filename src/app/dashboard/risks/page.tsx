@@ -53,7 +53,14 @@ export default async function RisksPage() {
                 const level = levelFor(score);
                 return (
                   <tr key={risk.id} className="border-t">
-                    <td className="px-4 py-2 font-medium">{risk.title}</td>
+                    <td className="px-4 py-2 font-medium">
+                      <Link
+                        href={`/dashboard/risks/${risk.id}`}
+                        className="text-primary hover:underline"
+                      >
+                        {risk.title}
+                      </Link>
+                    </td>
                     <td className="px-4 py-2 text-muted-foreground">{risk.category ?? "—"}</td>
                     <td className="px-4 py-2 text-muted-foreground">
                       {risk.ownerMembership?.profile.email ?? "—"}
