@@ -69,10 +69,44 @@ export function compute(risk: RiskDTO): Computed {
   };
 }
 
+// Qualitative palette for donuts keyed by arbitrary labels (categories, owners…).
+export const PAL = [
+  "#2E4C7E", "#4C7EBF", "#63BE7B", "#F2C94C", "#EE8B34",
+  "#E15759", "#8E7CC3", "#5AA9A0", "#B07AA1", "#9BBB59",
+];
+
+// Status colours mirror the reference (keys are Prisma RiskStatus values).
+export const STATUS_COL: Record<string, string> = {
+  OPEN: "#B0B0B0",
+  IN_PROGRESS: "#4C7EBF",
+  CLOSED: "#63BE7B",
+};
+
+/** Rough treatment progress from a risk status, 0-100. */
+export function progressOf(status: string) {
+  return status === "CLOSED" ? 100 : status === "IN_PROGRESS" ? 50 : 0;
+}
+
+/** Maps a euro exposure to a labelled severity band with a colour. */
+export function expoBand(v: number): { l: string; c: string } {
+  v = Number(v) || 0;
+  if (v >= 3e6) return { l: "Extrême", c: "#E15759" };
+  if (v >= 2e6) return { l: "Très élevée", c: "#EE8B34" };
+  if (v >= 1e6) return { l: "Élevée", c: "#F2C94C" };
+  if (v >= 5e5) return { l: "Moyenne", c: "#9BBB59" };
+  return { l: "Faible", c: "#63BE7B" };
+}
+
 // ---- SVG donut helpers (ported from the reference) ----
+// Coordinates are rounded to 3 decimals so the server- and client-rendered
+// path strings are byte-identical (avoids React hydration mismatches from
+// tiny floating-point differences between Node and the browser).
+function r3(n: number) {
+  return Math.round(n * 1000) / 1000;
+}
 function polar(cx: number, cy: number, r: number, a: number) {
   const t = ((a - 90) * Math.PI) / 180;
-  return [cx + r * Math.cos(t), cy + r * Math.sin(t)] as const;
+  return [r3(cx + r * Math.cos(t)), r3(cy + r * Math.sin(t))] as const;
 }
 export function arcPath(
   cx: number,

@@ -1,5 +1,9 @@
-import { ComingSoon } from "@/components/dashboard/ComingSoon";
+import { requireMembership } from "@/lib/auth";
+import { getOrgRisks } from "@/lib/risk-data";
+import { Kri } from "@/components/dashboard/Kri";
 
-export default function Page() {
-  return <ComingSoon title="Indicateurs (KRI)" sub="Mesures chiffrées de pilotage des risques" />;
+export default async function Page() {
+  const { membership } = await requireMembership();
+  const data = await getOrgRisks(membership.orgId);
+  return <Kri risks={data} who={membership.profile.email} />;
 }

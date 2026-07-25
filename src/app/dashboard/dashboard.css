@@ -112,7 +112,52 @@
 .rk .dleg .sw { width: 9px; height: 9px; border-radius: 2px; display: inline-block; margin-right: 5px; }
 .rk .linkbtn { background: none; border: 1px solid rgba(255,255,255,.25); color: #dbe2ef; font-size: 12px; padding: 8px 12px; border-radius: 4px; cursor: pointer; text-align: left; width: calc(100% - 36px); margin: 6px 18px; }
 .rk .linkbtn:hover { background: rgba(255,255,255,.08); color: #fff; }
+/* directions / entities */
+.rk .egrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px; }
+.rk .ecard { background: var(--card); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06); padding: 12px 14px; }
+.rk .ehead { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.rk .einit { width: 34px; height: 34px; border-radius: 50%; background: var(--navy); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex: 0 0 34px; }
+.rk .ename { font-weight: 600; font-size: 13px; line-height: 1.2; }
+.rk .emeta { font-size: 11px; color: var(--muted); }
+.rk .ebody { display: flex; gap: 10px; align-items: center; justify-content: space-between; }
+.rk .ptab { width: 100%; font-size: 11.5px; }
+.rk .ptab th { background: none; color: var(--muted); font-weight: 600; padding: 2px 4px; position: static; text-align: right; }
+.rk .ptab th:first-child { text-align: left; }
+.rk .ptab td { border: 0; padding: 2px 4px; text-align: right; background: none; }
+.rk .ptab tr:nth-child(even) td { background: none; }
+.rk .ptab td:first-child { text-align: left; }
+.rk .ptab tbody tr { cursor: default; }
+.rk .ptab tbody tr:hover td { background: none; }
+.rk .sq { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: -1px; margin-right: 5px; }
+.rk .efoot { display: flex; justify-content: space-between; gap: 6px; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 11px; color: var(--muted); }
+.rk .efoot b { color: var(--ink); }
+/* category strip */
+.rk .cstrip { display: flex; gap: 8px; overflow-x: auto; }
+.rk .ccol { flex: 1; min-width: 80px; text-align: center; border: 1px solid var(--line); border-radius: 6px; padding: 8px 5px; }
+.rk .cc-n { font-size: 22px; font-weight: 700; color: var(--navy); }
+.rk .cc-l { font-size: 10.5px; font-weight: 600; min-height: 26px; line-height: 1.15; }
+.rk .cc-s, .rk .cc-e { font-size: 10px; color: var(--muted); }
+.rk .cc-b { margin-top: 4px; border-radius: 3px; font-size: 11px; font-weight: 700; padding: 2px 0; color: #333; }
+/* treatments */
+.rk .prog { margin-bottom: 12px; }
+.rk .prog-v { font-size: 28px; font-weight: 700; color: var(--navy); line-height: 1; }
+.rk .prog-l { font-size: 11px; color: var(--muted); }
+.rk .pbar { height: 8px; background: #eee; border-radius: 4px; margin-top: 6px; overflow: hidden; }
+.rk .pbar span { display: block; height: 100%; background: #63be7b; }
+.rk .tstat { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 12px; }
+.rk .tstat b { color: var(--navy); }
+.rk .dotp { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+/* KRI cards */
+.rk .kgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.rk .kcard { background: var(--card); border: 1px solid var(--line); border-radius: 5px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06); padding: 14px 16px; }
+.rk .kcard .kname { font-size: 12.5px; font-weight: 600; margin-bottom: 8px; min-height: 32px; }
+.rk .kcard .krow { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
+.rk .kcard .kval { font-size: 30px; font-weight: 700; line-height: 1; }
+.rk .kcard .kunit { font-size: 12px; color: var(--muted); margin-left: 3px; }
+.rk .kcard .kstat { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 10px; }
+.rk .kcard .kth { font-size: 10.5px; color: var(--muted); margin-top: 8px; }
 @media (max-width: 1080px) {
   .rk .kpis { grid-template-columns: repeat(2, 1fr); }
+  .rk .egrid, .rk .kgrid { grid-template-columns: repeat(2, 1fr); }
   .rk .rail { display: none; }
 }

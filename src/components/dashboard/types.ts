@@ -11,6 +11,8 @@ export type ActionDTO = {
   percent: number;
   owner: string | null;
   due: string | null;
+  /** True when the due date has passed and the action is not DONE. */
+  overdue: boolean;
 };
 
 export type RiskDTO = {

@@ -1,5 +1,9 @@
-import { ComingSoon } from "@/components/dashboard/ComingSoon";
+import { requireMembership } from "@/lib/auth";
+import { getOrgRisks } from "@/lib/risk-data";
+import { Tendance } from "@/components/dashboard/Tendance";
 
-export default function Page() {
-  return <ComingSoon title="Tendance" sub="Évolution de l'exposition et des risques dans le temps" />;
+export default async function Page() {
+  const { membership } = await requireMembership();
+  const data = await getOrgRisks(membership.orgId);
+  return <Tendance risks={data} who={membership.profile.email} />;
 }

@@ -1,5 +1,9 @@
-import { ComingSoon } from "@/components/dashboard/ComingSoon";
+import { requireMembership } from "@/lib/auth";
+import { getOrgRisks } from "@/lib/risk-data";
+import { Directions } from "@/components/dashboard/Directions";
 
-export default function Page() {
-  return <ComingSoon title="Directions" sub="Répartition des risques par responsable / entité" />;
+export default async function Page() {
+  const { membership } = await requireMembership();
+  const data = await getOrgRisks(membership.orgId);
+  return <Directions risks={data} who={membership.profile.email} />;
 }
