@@ -48,6 +48,7 @@ model Organization {
   risks       Risk[]
   controls    Control[]
   actionPlans ActionPlan[]
+  snapshots   RiskSnapshot[]
 }
 
 model Profile {
@@ -121,6 +122,7 @@ model Risk {
 
   controls    Control[]
   actionPlans ActionPlan[]
+  snapshots   RiskSnapshot[]
 
   @@index([orgId])
 }
@@ -159,6 +161,28 @@ model ActionPlan {
 
   ownerMembershipId String?
   ownerMembership   Membership? @relation(fields: [ownerMembershipId], references: [id], onDelete: SetNull)
+
+  @@index([orgId])
+  @@index([riskId])
+}
+
+// A point-in-time snapshot of a risk's residual criticality and exposure,
+// taken when an admin "closes" a quarter. Powers the Tendance trend charts.
+// riskId is nullable + SetNull so deleting a risk keeps historical aggregates.
+model RiskSnapshot {
+  id          String   @id @default(cuid())
+  period      String   // human label, e.g. "T1 2026"
+  periodOrder Int      // sortable key: year * 10 + quarter
+  cr          Int      // residual criticality (prob × impact) at snapshot time
+  exposure    Decimal? @db.Decimal(14, 2)
+  level       String   // criticality level label at snapshot time
+  createdAt   DateTime @default(now())
+
+  orgId String
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  riskId String?
+  risk   Risk? @relation(fields: [riskId], references: [id], onDelete: SetNull)
 
   @@index([orgId])
   @@index([riskId])

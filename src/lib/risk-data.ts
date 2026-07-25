@@ -1,5 +1,20 @@
 import { prisma } from "@/lib/db";
-import type { RiskDTO } from "@/components/dashboard/types";
+import type { RiskDTO, HistoryPoint } from "@/components/dashboard/types";
+
+/** All snapshot points for an org, ordered chronologically. */
+export async function getOrgHistory(orgId: string): Promise<HistoryPoint[]> {
+  const snaps = await prisma.riskSnapshot.findMany({
+    where: { orgId },
+    orderBy: { periodOrder: "asc" },
+  });
+  return snaps.map((s) => ({
+    period: s.period,
+    periodOrder: s.periodOrder,
+    riskId: s.riskId,
+    cr: s.cr,
+    exposure: Number(s.exposure ?? 0),
+  }));
+}
 
 /**
  * Fetches every risk for one organisation and shapes it into the plain

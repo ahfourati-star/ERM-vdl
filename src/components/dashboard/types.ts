@@ -15,6 +15,14 @@ export type ActionDTO = {
   overdue: boolean;
 };
 
+export type HistoryPoint = {
+  period: string;
+  periodOrder: number;
+  riskId: string | null;
+  cr: number;
+  exposure: number;
+};
+
 export type RiskDTO = {
   id: string;
   title: string;
