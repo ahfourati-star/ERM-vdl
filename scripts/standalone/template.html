@@ -1,0 +1,1508 @@
+<title>Nederlands leren — le néerlandais pour les enfants</title>
+
+<style>
+  /*
+    Version autonome de l'application /leren, dans un seul fichier.
+    Les couleurs et les formes reprennent exactement `src/app/leren/leren.css`
+    pour que ce que l'on teste ici soit ce que l'on aura dans l'application.
+  */
+  :root {
+    color-scheme: light;
+    --bg: #fff8ee;
+    --ink: #2c2440;
+    --ink-soft: #6b6383;
+    --card: #ffffff;
+    --line: #e7ded3;
+    --good: #22a06b;
+    --good-deep: #157a4f;
+    --good-soft: #dcf5e9;
+    --bad: #e0574a;
+    --bad-soft: #fde5e2;
+    --accent: #6c4ce0;
+    --accent-deep: #4a2fb0;
+    --star: #f6b93b;
+    --t: var(--accent);
+    --t-soft: #ede9fe;
+  }
+
+  /* Un jeu pour enfants assume un seul univers visuel : on garde les mêmes
+     couleurs vives quel que soit le thème clair/sombre de l'appareil. */
+  :root[data-theme="dark"],
+  :root[data-theme="light"] {
+    color-scheme: light;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-weight: 600;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .app {
+    max-width: 30rem;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
+    min-height: 100vh;
+  }
+
+  .screen-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 100vh;
+    gap: 0;
+  }
+
+  h1 {
+    font-size: 1.875rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0.5rem 0 0;
+    text-wrap: balance;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin: 0 0 0.75rem;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .soft {
+    color: var(--ink-soft);
+  }
+
+  .mascot {
+    font-size: 3.75rem;
+    line-height: 1;
+  }
+
+  .emoji-xl {
+    font-size: 5rem;
+    line-height: 1;
+  }
+
+  /* --- Couleurs par thème (identiques à l'application) --- */
+  .rose   { --t: #f472b6; --t-soft: #fce7f3; }
+  .amber  { --t: #f59e0b; --t-soft: #fef3c7; }
+  .green  { --t: #4ca94c; --t-soft: #dcf5dc; }
+  .red    { --t: #ef4444; --t-soft: #fee2e2; }
+  .orange { --t: #f97316; --t-soft: #ffedd5; }
+  .pink   { --t: #ec6ea8; --t-soft: #fce4ef; }
+  .brown  { --t: #a97155; --t-soft: #f3e6df; }
+  .blue   { --t: #3b82f6; --t-soft: #dbeafe; }
+  .purple { --t: #8b5cf6; --t-soft: #ede9fe; }
+  .sky    { --t: #38bdf8; --t-soft: #e0f2fe; }
+  .teal   { --t: #14b8a6; --t-soft: #ccfbf1; }
+
+  /* --- Cartes de thème --- */
+  .themes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .theme-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border-radius: 1.75rem;
+    border: 3px solid var(--t);
+    background: var(--t-soft);
+    text-align: left;
+    box-shadow: 0 5px 0 var(--t);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+
+  .theme-card:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 var(--t);
+  }
+
+  .theme-card .icon {
+    font-size: 2.75rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .theme-card .body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .theme-card .name {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .theme-card .nl {
+    display: block;
+    font-size: 1rem;
+    color: var(--ink-soft);
+  }
+
+  .stars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    flex-shrink: 0;
+    font-size: 1rem;
+    line-height: 1.1;
+  }
+
+  /* --- Boutons --- */
+  .choice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 1rem;
+    border-radius: 1.5rem;
+    border: 3px solid var(--line);
+    background: var(--card);
+    font-size: 1.5rem;
+    font-weight: 700;
+    box-shadow: 0 5px 0 var(--line);
+    transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.15s ease,
+      border-color 0.15s ease, opacity 0.15s ease;
+  }
+
+  .choice:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 var(--line);
+  }
+
+  .choice.good {
+    border-color: var(--good);
+    background: var(--good-soft);
+    box-shadow: 0 5px 0 var(--good);
+    animation: pop 0.3s ease;
+  }
+
+  .choice.bad {
+    border-color: var(--bad);
+    background: var(--bad-soft);
+    box-shadow: 0 5px 0 var(--bad);
+    animation: shake 0.35s ease;
+  }
+
+  .choice.dim {
+    opacity: 0.35;
+  }
+
+  .primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.25rem;
+    box-shadow: 0 5px 0 var(--accent-deep);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+
+  .primary:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 var(--accent-deep);
+  }
+
+  .primary.win {
+    background: var(--good);
+    box-shadow: 0 5px 0 var(--good-deep);
+  }
+
+  .primary.win:active {
+    box-shadow: 0 1px 0 var(--good-deep);
+  }
+
+  .primary:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .speaker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 4px 0 var(--accent-deep);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    width: 6rem;
+    height: 6rem;
+    font-size: 2.75rem;
+  }
+
+  .speaker.small {
+    width: 3.25rem;
+    height: 3.25rem;
+    font-size: 1.5rem;
+    box-shadow: 0 3px 0 var(--accent-deep);
+  }
+
+  .speaker:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--accent-deep);
+  }
+
+  .link {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-weight: 700;
+    text-decoration: underline;
+    font-size: 1rem;
+    padding: 0.5rem;
+  }
+
+  /* --- Statistiques --- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+  }
+
+  .stat {
+    border: 2px solid var(--line);
+    background: var(--card);
+    border-radius: 1rem;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+  }
+
+  .stat .value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat .label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    margin-top: 0.25rem;
+  }
+
+  /* --- Barre de progression --- */
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .bar {
+    flex: 1;
+    height: 1rem;
+    border-radius: 999px;
+    background: #ece3d6;
+    overflow: hidden;
+  }
+
+  .bar > span {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--good);
+    transition: width 0.35s ease;
+  }
+
+  .bar.thin {
+    height: 0.625rem;
+    margin-top: 0.5rem;
+  }
+
+  .quit {
+    font-size: 1.75rem;
+    line-height: 1;
+    color: var(--ink-soft);
+    padding: 0.25rem 0.5rem;
+  }
+
+  /* --- Exercices --- */
+  .exercise {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 11rem;
+  }
+
+  .prompt {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--ink-soft);
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .options.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .options.grid .choice {
+    aspect-ratio: 1;
+    font-size: 3.5rem;
+  }
+
+  .audio-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .audio-row .choice {
+    height: 5rem;
+    padding: 0;
+  }
+
+  .audio-row .pick {
+    width: 5rem;
+    flex-shrink: 0;
+  }
+
+  .audio-row .pick:disabled {
+    opacity: 0.35;
+  }
+
+  .audio-row .pick.ready {
+    border-color: var(--good);
+    box-shadow: 0 5px 0 var(--good);
+    color: var(--good);
+  }
+
+  /* --- Remise en ordre d'une phrase --- */
+  .dropzone {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    min-height: 5rem;
+    padding: 0.75rem;
+    border: 2px dashed var(--line);
+    border-radius: 1rem;
+    background: var(--card);
+  }
+
+  .pool {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .token {
+    width: auto;
+    padding: 0.5rem 1rem;
+    font-size: 1.25rem;
+    border-radius: 1rem;
+  }
+
+  /* --- Bandeau de correction --- */
+  .feedback {
+    position: fixed;
+    inset: auto 0 0 0;
+    border-top: 4px solid;
+    padding: 1rem;
+    z-index: 10;
+    animation: rise 0.2s ease;
+  }
+
+  .feedback .inner {
+    max-width: 30rem;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .feedback .text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .feedback .verdict {
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+
+  .feedback .answer {
+    font-size: 1.125rem;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .feedback .translation {
+    font-size: 1rem;
+    color: var(--ink-soft);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .feedback.ok {
+    background: var(--good-soft);
+    border-color: var(--good);
+  }
+
+  .feedback.ok .verdict {
+    color: var(--good);
+  }
+
+  .feedback.ko {
+    background: var(--bad-soft);
+    border-color: var(--bad);
+  }
+
+  .feedback.ko .verdict {
+    color: var(--bad);
+  }
+
+  .feedback .primary {
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  /* --- Espace parents --- */
+  .panel {
+    border: 2px solid var(--line);
+    background: var(--card);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .panel p + p {
+    margin-top: 0.75rem;
+  }
+
+  .panel .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.25rem 0;
+    font-size: 1rem;
+  }
+
+  .panel .row .num {
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .panel input {
+    width: 100%;
+    font: inherit;
+    font-size: 1.125rem;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--line);
+    border-radius: 0.75rem;
+    background: #fff;
+    color: inherit;
+    margin-top: 0.25rem;
+  }
+
+  .pair {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .pair .choice {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+
+  .pair .choice.on {
+    border-color: var(--accent);
+    box-shadow: 0 5px 0 var(--accent);
+  }
+
+  .notice {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    border: 2px solid;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .notice.warn {
+    border-color: var(--bad);
+    background: var(--bad-soft);
+  }
+
+  .notice.ok {
+    border-color: var(--good);
+    background: var(--good-soft);
+  }
+
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border: 2px solid var(--line);
+    background: var(--card);
+    border-radius: 999px;
+  }
+
+  .toggle button {
+    border-radius: 999px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+  }
+
+  .toggle button[aria-pressed="true"] {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+  }
+
+  /* --- Animations --- */
+  @keyframes pop {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.07); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-7px); }
+    50% { transform: translateX(7px); }
+    75% { transform: translateX(-4px); }
+  }
+
+  @keyframes bounceIn {
+    0% { transform: scale(0.6); opacity: 0; }
+    60% { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes rise {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .appear {
+    animation: bounceIn 0.35s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+</style>
+
+<main class="app" id="app"></main>
+
+<script>
+  "use strict";
+
+  /* ============================================================
+     LE VOCABULAIRE — généré depuis src/lib/leren/vocabulary.ts
+     ============================================================ */
+  const THEMES = __THEMES_JSON__;
+
+  /* ============================================================
+     LA VOIX NÉERLANDAISE
+     ============================================================ */
+  let dutchVoice = null;
+
+  function pickVoice() {
+    if (!("speechSynthesis" in window)) return null;
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices.length) return null;
+    return (
+      voices.find((v) => v.lang === "nl-NL") ||
+      voices.find((v) => v.lang === "nl-BE") ||
+      voices.find((v) => v.lang.toLowerCase().startsWith("nl")) ||
+      null
+    );
+  }
+
+  if ("speechSynthesis" in window) {
+    dutchVoice = pickVoice();
+    window.speechSynthesis.addEventListener("voiceschanged", () => {
+      dutchVoice = pickVoice();
+    });
+  }
+
+  function hasDutchVoice() {
+    if (!dutchVoice) dutchVoice = pickVoice();
+    return dutchVoice !== null;
+  }
+
+  function speak(text, slow) {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    if (!dutchVoice) dutchVoice = pickVoice();
+    if (dutchVoice) utterance.voice = dutchVoice;
+    utterance.lang = dutchVoice ? dutchVoice.lang : "nl-NL";
+    utterance.rate = slow ? 0.6 : 0.85;
+    utterance.pitch = 1.05;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  /* ============================================================
+     LA MÉMOIRE — boîtes de Leitner, comme dans l'application
+     ============================================================ */
+  const STORAGE_KEY = "leren-nl-v1";
+  const BOX_DELAY_DAYS = [0, 1, 2, 4, 8, 21];
+  const MAX_BOX = 5;
+  const MASTERED_BOX = 3;
+  const DAY_MS = 86400000;
+
+  function emptyProgress() {
+    return {
+      version: 1, words: {}, lessons: {}, streak: 0,
+      lastDay: null, reader: true, name: "", setupDone: false,
+    };
+  }
+
+  let progress = emptyProgress();
+
+  function loadProgress() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return emptyProgress();
+      const parsed = JSON.parse(raw);
+      if (parsed.version !== 1) return emptyProgress();
+      return Object.assign(emptyProgress(), parsed);
+    } catch (error) {
+      return emptyProgress();
+    }
+  }
+
+  function saveProgress() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    } catch (error) {
+      /* navigation privée : on continue à jouer sans sauvegarde */
+    }
+  }
+
+  function wordState(id) {
+    return progress.words[id] || { box: 0, due: 0, seen: 0 };
+  }
+
+  function recordAnswer(id, correct) {
+    const current = wordState(id);
+    const box = correct
+      ? Math.min(MAX_BOX, current.box + 1)
+      : Math.max(0, current.box - 1);
+    progress.words[id] = {
+      box: box,
+      due: Date.now() + BOX_DELAY_DAYS[box] * DAY_MS,
+      seen: current.seen + 1,
+    };
+    saveProgress();
+  }
+
+  function markSeen(id) {
+    const current = wordState(id);
+    progress.words[id] = { box: current.box, due: Date.now(), seen: current.seen + 1 };
+    saveProgress();
+  }
+
+  function dayKey(time) {
+    const d = new Date(time);
+    const pad = (n) => String(n).padStart(2, "0");
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  }
+
+  function completeLesson(themeId) {
+    const today = dayKey(Date.now());
+    const yesterday = dayKey(Date.now() - DAY_MS);
+    if (progress.lastDay === today) {
+      /* déjà joué aujourd'hui : la série ne bouge pas */
+    } else if (progress.lastDay === yesterday) {
+      progress.streak += 1;
+    } else {
+      progress.streak = 1;
+    }
+    progress.lastDay = today;
+    progress.lessons[themeId] = (progress.lessons[themeId] || 0) + 1;
+    saveProgress();
+  }
+
+  function themeRatio(theme) {
+    const mastered = theme.words.filter((w) => wordState(w.id).box >= MASTERED_BOX).length;
+    return theme.words.length ? mastered / theme.words.length : 0;
+  }
+
+  function themeStars(theme) {
+    const ratio = themeRatio(theme);
+    if (ratio >= 1) return 3;
+    if (ratio >= 0.6) return 2;
+    if (ratio >= 0.3) return 1;
+    return 0;
+  }
+
+  function totalStars() {
+    return THEMES.reduce((sum, t) => sum + themeStars(t), 0);
+  }
+
+  function knownWordCount() {
+    return Object.keys(progress.words).filter((id) => progress.words[id].seen > 0).length;
+  }
+
+  /* ============================================================
+     LA CONSTRUCTION D'UNE LEÇON
+     ============================================================ */
+  const WORDS_PER_LESSON = 8;
+  const NEW_WORDS_PER_LESSON = 4;
+
+  function shuffle(items) {
+    const copy = items.slice();
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const swap = copy[i];
+      copy[i] = copy[j];
+      copy[j] = swap;
+    }
+    return copy;
+  }
+
+  function fullNl(word) {
+    return word.art ? word.art + " " + word.nl : word.nl;
+  }
+
+  function buildChoices(target, pool, count) {
+    const others = shuffle(pool.filter((w) => w.id !== target.id)).slice(0, count - 1);
+    return shuffle([target].concat(others));
+  }
+
+  function exerciseFor(word, box, pool, reader) {
+    if (!reader) {
+      return box <= 1
+        ? { kind: "pick-image", word: word, choices: buildChoices(word, pool, 4) }
+        : { kind: "pick-audio", word: word, choices: buildChoices(word, pool, 3) };
+    }
+    if (box <= 0) return { kind: "pick-word", word: word, choices: buildChoices(word, pool, 3) };
+    if (box === 1) return { kind: "pick-image", word: word, choices: buildChoices(word, pool, 4) };
+    if (box === 2) return { kind: "pick-word", word: word, choices: buildChoices(word, pool, 4) };
+    return { kind: "translate", word: word, choices: buildChoices(word, pool, 4) };
+  }
+
+  function easierStep(step, pool, reader) {
+    if (step.kind === "sentence") return step;
+    const word = step.word;
+    if (!reader) return { kind: "pick-image", word: word, choices: buildChoices(word, pool, 3) };
+    if (step.kind === "translate" || step.kind === "pick-audio") {
+      return { kind: "pick-word", word: word, choices: buildChoices(word, pool, 4) };
+    }
+    return { kind: "pick-image", word: word, choices: buildChoices(word, pool, 3) };
+  }
+
+  function buildSession(theme) {
+    const reader = progress.reader;
+    const pool = theme.words;
+    const now = Date.now();
+
+    const neverSeen = pool.filter((w) => wordState(w.id).seen === 0);
+    const toReview = pool.filter((w) => {
+      const state = progress.words[w.id];
+      return state && state.due <= now;
+    });
+    const weakest = pool.slice().sort((a, b) => wordState(a.id).box - wordState(b.id).box);
+
+    const newWords = shuffle(neverSeen).slice(0, NEW_WORDS_PER_LESSON);
+    const reviewWords = shuffle(toReview)
+      .filter((w) => newWords.indexOf(w) === -1)
+      .slice(0, WORDS_PER_LESSON - newWords.length);
+
+    const selected = newWords.concat(reviewWords);
+    for (const word of weakest) {
+      if (selected.length >= WORDS_PER_LESSON) break;
+      if (selected.indexOf(word) === -1) selected.push(word);
+    }
+
+    const steps = [];
+    for (const word of newWords) {
+      steps.push({ kind: "discover", word: word });
+      steps.push(
+        reader
+          ? { kind: "pick-word", word: word, choices: buildChoices(word, pool, 3) }
+          : { kind: "pick-image", word: word, choices: buildChoices(word, pool, 3) }
+      );
+    }
+
+    const reviewSteps = selected
+      .filter((w) => newWords.indexOf(w) === -1)
+      .map((word) => exerciseFor(word, wordState(word.id).box, pool, reader));
+    steps.push.apply(steps, shuffle(reviewSteps));
+
+    for (const word of shuffle(newWords)) {
+      steps.push(
+        reader
+          ? { kind: "pick-image", word: word, choices: buildChoices(word, pool, 4) }
+          : { kind: "pick-audio", word: word, choices: buildChoices(word, pool, 3) }
+      );
+    }
+
+    const mastered = pool.filter((w) => wordState(w.id).box >= MASTERED_BOX).length;
+    if (reader && theme.sentences.length && mastered >= 4) {
+      const sentence = shuffle(theme.sentences)[0];
+      steps.push({ kind: "sentence", sentence: sentence, tokens: shuffle(sentence.nl.split(" ")) });
+    }
+
+    return steps;
+  }
+
+  /* ============================================================
+     L'ÉCRAN
+     ============================================================ */
+  const app = document.getElementById("app");
+  const CHEERS = ["Goed zo !", "Super !", "Prima !", "Bravo !", "Knap !"];
+  const CORRECT_PAUSE_MS = 1100;
+
+  let view = "home";
+  let lesson = null;
+  let advanceTimer = null;
+
+  function el(tag, props, children) {
+    const node = document.createElement(tag);
+    if (props) {
+      for (const key of Object.keys(props)) {
+        const value = props[key];
+        if (value === null || value === undefined || value === false) continue;
+        if (key === "class") node.className = value;
+        else if (key === "text") node.textContent = value;
+        else if (key === "html") node.innerHTML = value;
+        else if (key.startsWith("on")) node.addEventListener(key.slice(2), value);
+        else node.setAttribute(key, value);
+      }
+    }
+    for (const child of children || []) {
+      if (child) node.appendChild(child);
+    }
+    return node;
+  }
+
+  function starRow(count, size) {
+    return el("span", { class: "stars", "aria-label": count + " étoiles sur 3", style: size ? "font-size:" + size : null },
+      [0, 1, 2].map((i) => el("span", { "aria-hidden": "true", text: i < count ? "★" : "☆",
+        style: "color:" + (i < count ? "var(--star)" : "var(--line)") })));
+  }
+
+  function speakerButton(text, small) {
+    return el("button", {
+      class: "speaker" + (small ? " small" : ""),
+      type: "button",
+      "aria-label": "Écouter « " + text + " » en néerlandais",
+      onclick: () => speak(text),
+      ondblclick: () => speak(text, true),
+    }, [el("span", { "aria-hidden": "true", text: "🔊" })]);
+  }
+
+  function render() {
+    app.replaceChildren();
+    app.className = "app";
+    if (!progress.setupDone) return renderSetup();
+    if (view === "parents") return renderParents();
+    if (view === "home") return renderHome();
+    if (view === "intro") return renderIntro();
+    if (view === "done") return renderDone();
+    return renderStep();
+  }
+
+  /* --- Première visite --- */
+  function renderSetup() {
+    app.className = "app screen-center";
+    const choose = (reader) => {
+      progress.reader = reader;
+      progress.setupDone = true;
+      saveProgress();
+      speak("hallo");
+      render();
+    };
+    app.append(
+      el("div", { class: "mascot appear", "aria-hidden": "true", text: "🐰" }),
+      el("h1", { text: "Bonjour !" }),
+      el("p", { style: "font-size:1.125rem;margin-top:0.75rem", text: "Je suis Bram, et je parle néerlandais. Avant de commencer, dis-moi :" }),
+      el("div", { class: "options", style: "margin-top:2rem" }, [
+        el("button", { class: "choice", type: "button", onclick: () => choose(true), text: "📖  Je sais lire" }),
+        el("button", { class: "choice", type: "button", onclick: () => choose(false), text: "👂  Pas encore" }),
+      ]),
+      el("p", { class: "soft", style: "font-size:0.875rem;margin-top:1.5rem", text: "Si l'enfant ne lit pas encore, tous les exercices passent par l'image et par le son. On peut changer ce choix à tout moment." })
+    );
+  }
+
+  /* --- Accueil --- */
+  function renderHome() {
+    const stat = (icon, value, label) =>
+      el("div", { class: "stat" }, [
+        el("span", { "aria-hidden": "true", text: icon }),
+        el("span", { class: "value", text: String(value) }),
+        el("span", { class: "label", text: label }),
+      ]);
+
+    app.append(
+      el("header", { style: "text-align:center" }, [
+        el("div", { class: "mascot appear", "aria-hidden": "true", text: "🐰" }),
+        el("h1", { text: progress.name ? "Hallo " + progress.name + " !" : "Hallo !" }),
+        el("p", { class: "soft", style: "font-size:1.125rem;margin-top:0.25rem", text: "On apprend le néerlandais ?" }),
+      ]),
+      el("div", { class: "stats" }, [
+        stat("🔥", progress.streak, "jours de suite"),
+        stat("⭐", totalStars() + "/" + THEMES.length * 3, "étoiles"),
+        stat("📚", knownWordCount(), "mots vus"),
+      ]),
+      el("ul", { class: "themes" }, THEMES.map((theme) =>
+        el("li", {}, [
+          el("button", {
+            class: "theme-card " + theme.color,
+            type: "button",
+            onclick: () => startLesson(theme),
+          }, [
+            el("span", { class: "icon", "aria-hidden": "true", text: theme.emoji }),
+            el("span", { class: "body" }, [
+              el("span", { class: "name", text: theme.fr }),
+              el("span", { class: "nl", text: theme.nl }),
+              el("span", { class: "bar thin" }, [
+                el("span", { style: "width:" + Math.round(themeRatio(theme) * 100) + "%" }),
+              ]),
+            ]),
+            starRow(themeStars(theme), "1.125rem"),
+          ]),
+        ])
+      )),
+      el("div", { class: "footer" }, [
+        el("div", { class: "toggle" }, [
+          el("button", {
+            type: "button", "aria-pressed": String(!progress.reader), text: "👂 Je ne lis pas",
+            onclick: () => { progress.reader = false; saveProgress(); render(); },
+          }),
+          el("button", {
+            type: "button", "aria-pressed": String(progress.reader), text: "📖 Je lis",
+            onclick: () => { progress.reader = true; saveProgress(); render(); },
+          }),
+        ]),
+        el("button", { class: "link", type: "button", text: "Espace parents", onclick: () => { view = "parents"; render(); } }),
+      ])
+    );
+  }
+
+  /* --- Avant la leçon --- */
+  function startLesson(theme) {
+    lesson = {
+      theme: theme, queue: [], cursor: 0, result: null,
+      correct: 0, asked: 0, starsBefore: themeStars(theme),
+    };
+    view = "intro";
+    render();
+  }
+
+  function renderIntro() {
+    const theme = lesson.theme;
+    app.className = "app screen-center " + theme.color;
+    app.append(
+      el("div", { class: "emoji-xl appear", "aria-hidden": "true", text: theme.emoji }),
+      el("h1", { text: theme.fr }),
+      el("p", { style: "font-size:1.25rem;font-weight:800;color:var(--t);margin-top:0.25rem", text: theme.nl }),
+      el("p", { class: "soft", style: "font-size:1.125rem;margin-top:1.5rem", text: "Une petite leçon de 5 minutes. Écoute bien !" }),
+      el("button", {
+        class: "primary", type: "button", style: "margin-top:2rem", text: "C'est parti ! →",
+        onclick: () => {
+          /* Le premier appui débloque aussi le son : les navigateurs
+             interdisent de parler avant une action de l'utilisateur. */
+          speak(theme.nl);
+          lesson.starsBefore = themeStars(theme);
+          lesson.queue = buildSession(theme);
+          lesson.cursor = 0;
+          lesson.correct = 0;
+          lesson.asked = 0;
+          lesson.result = null;
+          view = "play";
+          render();
+        },
+      }),
+      el("button", { class: "link", type: "button", style: "margin-top:1.5rem", text: "Retour", onclick: goHome })
+    );
+  }
+
+  function goHome() {
+    if (advanceTimer) clearTimeout(advanceTimer);
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    lesson = null;
+    view = "home";
+    render();
+  }
+
+  /* --- Pendant la leçon --- */
+  function currentStep() {
+    return lesson.queue[lesson.cursor];
+  }
+
+  function goNext() {
+    if (advanceTimer) clearTimeout(advanceTimer);
+    lesson.result = null;
+    if (lesson.cursor + 1 >= lesson.queue.length) {
+      completeLesson(lesson.theme.id);
+      view = "done";
+    } else {
+      lesson.cursor += 1;
+    }
+    render();
+  }
+
+  function answer(correct, pickedId) {
+    if (lesson.result) return;
+    const step = currentStep();
+    lesson.result = { correct: correct, picked: pickedId };
+    lesson.asked += 1;
+    if (step.kind !== "sentence") recordAnswer(step.word.id, correct);
+    if (correct) {
+      lesson.correct += 1;
+      advanceTimer = setTimeout(goNext, CORRECT_PAUSE_MS);
+    } else {
+      /* Un mot raté revient plus tard dans la même leçon, sous une forme
+         plus facile : l'enfant ne quitte jamais la leçon sur un échec. */
+      lesson.queue.push(easierStep(step, lesson.theme.words, progress.reader));
+    }
+    render();
+  }
+
+  function stateClass(optionId, targetId) {
+    if (!lesson.result) return "";
+    if (optionId === targetId) return " good";
+    if (optionId === lesson.result.picked) return " bad";
+    return " dim";
+  }
+
+  function renderStep() {
+    const step = currentStep();
+    const percent = Math.round((lesson.cursor / Math.max(1, lesson.queue.length)) * 100);
+
+    app.append(
+      el("div", { class: "topbar" }, [
+        el("button", { class: "quit", type: "button", "aria-label": "Quitter la leçon", text: "✕", onclick: goHome }),
+        el("div", { class: "bar" }, [el("span", { style: "width:" + percent + "%" })]),
+      ])
+    );
+
+    const body = el("div", { class: "exercise" });
+    app.append(body);
+
+    if (step.kind === "discover") renderDiscover(body, step);
+    if (step.kind === "pick-word") renderPickWord(body, step);
+    if (step.kind === "pick-image") renderPickImage(body, step);
+    if (step.kind === "pick-audio") renderPickAudio(body, step);
+    if (step.kind === "translate") renderTranslate(body, step);
+    if (step.kind === "sentence") renderSentence(body, step);
+
+    if (lesson.result) renderFeedback(step);
+  }
+
+  function renderDiscover(body, step) {
+    speak(fullNl(step.word));
+    body.append(
+      el("p", { class: "prompt", text: "Un mot nouveau !" }),
+      el("div", { class: "emoji-xl appear", "aria-hidden": "true", text: step.word.emoji }),
+      el("div", {}, [
+        el("p", { style: "font-size:2.25rem;font-weight:800;text-align:center", text: fullNl(step.word) }),
+        el("p", { class: "soft", style: "font-size:1.25rem;text-align:center;margin-top:0.25rem", text: step.word.fr }),
+      ]),
+      speakerButton(fullNl(step.word)),
+      el("button", {
+        class: "primary", type: "button", text: "J'ai compris →",
+        onclick: () => { markSeen(step.word.id); goNext(); },
+      })
+    );
+  }
+
+  function renderPickWord(body, step) {
+    body.append(
+      el("p", { class: "prompt", text: "Quel est ce mot ?" }),
+      el("div", { class: "emoji-xl", "aria-hidden": "true", text: step.word.emoji }),
+      el("div", { class: "options" }, step.choices.map((choice) =>
+        el("button", {
+          class: "choice" + stateClass(choice.id, step.word.id),
+          type: "button",
+          disabled: lesson.result ? "disabled" : null,
+          text: fullNl(choice),
+          onclick: () => { speak(fullNl(choice)); answer(choice.id === step.word.id, choice.id); },
+        })
+      ))
+    );
+  }
+
+  function renderPickImage(body, step) {
+    speak(step.word.nl);
+    body.append(
+      el("p", { class: "prompt", text: "Écoute, puis touche la bonne image" }),
+      speakerButton(step.word.nl),
+      el("div", { class: "options grid" }, step.choices.map((choice) =>
+        el("button", {
+          class: "choice" + stateClass(choice.id, step.word.id),
+          type: "button",
+          "aria-label": choice.fr,
+          disabled: lesson.result ? "disabled" : null,
+          onclick: () => answer(choice.id === step.word.id, choice.id),
+        }, [el("span", { "aria-hidden": "true", text: choice.emoji })])
+      ))
+    );
+  }
+
+  function renderPickAudio(body, step) {
+    const heard = {};
+    const rows = el("div", { class: "options" });
+
+    step.choices.forEach((choice, index) => {
+      const pick = el("button", {
+        class: "choice pick",
+        type: "button",
+        disabled: "disabled",
+        "aria-label": "Choisir le mot numéro " + (index + 1),
+        onclick: () => answer(choice.id === step.word.id, choice.id),
+      }, [el("span", { "aria-hidden": "true", text: "✓" })]);
+
+      const play = el("button", {
+        class: "choice" + stateClass(choice.id, step.word.id),
+        type: "button",
+        disabled: lesson.result ? "disabled" : null,
+        "aria-label": "Écouter le mot numéro " + (index + 1),
+        onclick: () => {
+          speak(choice.nl);
+          if (!heard[choice.id]) {
+            heard[choice.id] = true;
+            pick.disabled = false;
+            pick.classList.add("ready");
+          }
+        },
+      }, [el("span", { "aria-hidden": "true", text: "🔊 " + (index + 1) })]);
+
+      if (lesson.result) {
+        pick.disabled = true;
+        pick.className = "choice pick" + stateClass(choice.id, step.word.id);
+      }
+
+      rows.appendChild(el("div", { class: "audio-row" }, [play, pick]));
+    });
+
+    body.append(
+      el("p", { class: "prompt", text: "Écoute les mots et choisis le bon" }),
+      el("div", { class: "emoji-xl", "aria-hidden": "true", text: step.word.emoji }),
+      rows
+    );
+  }
+
+  function renderTranslate(body, step) {
+    body.append(
+      el("p", { class: "prompt", text: "Comment dit-on en néerlandais ?" }),
+      el("p", { style: "font-size:2.25rem;font-weight:800;text-align:center", text: step.word.fr }),
+      el("div", { class: "options" }, step.choices.map((choice) =>
+        el("button", {
+          class: "choice" + stateClass(choice.id, step.word.id),
+          type: "button",
+          disabled: lesson.result ? "disabled" : null,
+          text: fullNl(choice),
+          onclick: () => { speak(fullNl(choice)); answer(choice.id === step.word.id, choice.id); },
+        })
+      ))
+    );
+  }
+
+  function renderSentence(body, step) {
+    let placed = [];
+
+    const zone = el("div", { class: "dropzone" });
+    const pool = el("div", { class: "pool" });
+    const check = el("button", { class: "primary", type: "button", text: "Vérifier", disabled: "disabled" });
+
+    function refresh() {
+      zone.replaceChildren();
+      pool.replaceChildren();
+
+      placed.forEach((tokenIndex, position) => {
+        zone.appendChild(el("button", {
+          class: "choice token", type: "button",
+          disabled: lesson.result ? "disabled" : null,
+          text: step.tokens[tokenIndex],
+          onclick: () => { placed.splice(position, 1); refresh(); },
+        }));
+      });
+
+      step.tokens.forEach((token, index) => {
+        if (placed.indexOf(index) !== -1) return;
+        pool.appendChild(el("button", {
+          class: "choice token", type: "button",
+          disabled: lesson.result ? "disabled" : null,
+          text: token,
+          onclick: () => { placed.push(index); refresh(); },
+        }));
+      });
+
+      check.disabled = placed.length !== step.tokens.length || Boolean(lesson.result);
+    }
+
+    check.addEventListener("click", () => {
+      const built = placed.map((i) => step.tokens[i]).join(" ");
+      answer(built === step.sentence.nl, built);
+    });
+
+    refresh();
+
+    body.append(
+      el("p", { class: "prompt", text: "Remets la phrase dans l'ordre" }),
+      el("p", { style: "font-size:1.5rem;font-weight:800;text-align:center", text: step.sentence.fr }),
+      zone,
+      pool,
+      check
+    );
+  }
+
+  function renderFeedback(step) {
+    const correct = lesson.result.correct;
+    const answerText = step.kind === "sentence" ? step.sentence.nl : fullNl(step.word);
+    const answerFr = step.kind === "sentence" ? step.sentence.fr : step.word.fr;
+    const cheer = shuffle(CHEERS)[0];
+
+    app.appendChild(
+      el("div", { class: "feedback " + (correct ? "ok" : "ko"), role: "status" }, [
+        el("div", { class: "inner" }, [
+          el("div", { class: "text" }, [
+            el("p", { class: "verdict", text: correct ? cheer + " 🎉" : "Presque !" }),
+            el("p", { class: "answer", text: answerText }),
+            el("p", { class: "translation", text: answerFr }),
+          ]),
+          speakerButton(answerText, true),
+          correct ? null : el("button", { class: "primary", type: "button", text: "Continuer", onclick: goNext }),
+        ]),
+      ])
+    );
+  }
+
+  /* --- Fin de leçon --- */
+  function renderDone() {
+    app.className = "app screen-center";
+    const stars = themeStars(lesson.theme);
+    app.append(
+      el("div", { class: "emoji-xl appear", "aria-hidden": "true", text: stars > lesson.starsBefore ? "🎉" : "🐰" }),
+      el("h1", { text: "Goed gedaan !" }),
+      el("p", { class: "soft", style: "font-size:1.125rem;margin-top:0.25rem", text: "Bien joué !" }),
+      el("div", { style: "display:flex;gap:0.5rem;font-size:3rem;margin-top:1.5rem" },
+        [0, 1, 2].map((i) => el("span", {
+          "aria-hidden": "true", text: i < stars ? "★" : "☆",
+          class: i < stars ? "appear" : null,
+          style: "color:" + (i < stars ? "var(--star)" : "var(--line)"),
+        }))),
+      el("p", { style: "font-size:1.25rem;font-weight:800;margin-top:1.5rem", text: lesson.correct + " bonnes réponses sur " + lesson.asked }),
+      progress.streak > 1 ? el("p", { style: "font-size:1.125rem;margin-top:0.5rem", text: "🔥 " + progress.streak + " jours de suite !" }) : null,
+      el("button", {
+        class: "primary win", type: "button", style: "margin-top:2rem", text: "Encore une leçon",
+        onclick: () => { const theme = lesson.theme; startLesson(theme); view = "intro"; render(); },
+      }),
+      el("button", { class: "link", type: "button", style: "margin-top:1.5rem", text: "Choisir un autre thème", onclick: goHome })
+    );
+  }
+
+  /* --- Espace parents --- */
+  function renderParents() {
+    let confirmingReset = false;
+
+    const soundNotice = el("div");
+
+    function showVoiceStatus() {
+      soundNotice.replaceChildren();
+      if (hasDutchVoice()) {
+        soundNotice.appendChild(el("p", { class: "notice ok", text: "Une voix néerlandaise est bien installée sur cet appareil." }));
+      } else {
+        soundNotice.appendChild(el("div", { class: "notice warn", html:
+          "Aucune voix néerlandaise n'a été trouvée sur cet appareil. Le mot sera lu avec l'accent de la langue par défaut, ce qui n'est pas idéal pour apprendre. Pour l'ajouter :<br>" +
+          "<strong>Android</strong> : Réglages → Général → Synthèse vocale → installer les données vocales → Nederlands.<br>" +
+          "<strong>iPhone / iPad</strong> : Réglages → Accessibilité → Contenu énoncé → Voix → Néerlandais.<br>" +
+          "<strong>Windows</strong> : Paramètres → Heure et langue → Langue → ajouter « Nederlands ».<br>" +
+          "<strong>Mac</strong> : Réglages → Accessibilité → Contenu énoncé → Voix système → Personnaliser → Néerlandais."
+        }));
+      }
+    }
+
+    const masteredTotal = THEMES.reduce((n, t) =>
+      n + t.words.filter((w) => wordState(w.id).box >= MASTERED_BOX).length, 0);
+    const wordTotal = THEMES.reduce((n, t) => n + t.words.length, 0);
+
+    const resetZone = el("div", { style: "margin-top:1rem" });
+
+    function refreshReset() {
+      resetZone.replaceChildren();
+      if (!confirmingReset) {
+        resetZone.appendChild(el("button", {
+          class: "choice", type: "button", style: "font-size:1rem", text: "Tout recommencer à zéro",
+          onclick: () => { confirmingReset = true; refreshReset(); },
+        }));
+      } else {
+        resetZone.appendChild(el("div", { class: "pair" }, [
+          el("button", {
+            class: "choice", type: "button", style: "border-color:var(--bad);color:var(--bad)",
+            text: "Oui, tout effacer",
+            onclick: () => { progress = emptyProgress(); saveProgress(); view = "home"; render(); },
+          }),
+          el("button", {
+            class: "choice", type: "button", text: "Annuler",
+            onclick: () => { confirmingReset = false; refreshReset(); },
+          }),
+        ]));
+      }
+    }
+    refreshReset();
+
+    const readerPair = el("div", { class: "pair" });
+    function refreshReader() {
+      readerPair.replaceChildren();
+      readerPair.append(
+        el("button", {
+          class: "choice" + (progress.reader ? " on" : ""), type: "button", text: "Oui, il/elle lit",
+          onclick: () => { progress.reader = true; saveProgress(); refreshReader(); },
+        }),
+        el("button", {
+          class: "choice" + (!progress.reader ? " on" : ""), type: "button", text: "Pas encore",
+          onclick: () => { progress.reader = false; saveProgress(); refreshReader(); },
+        })
+      );
+    }
+    refreshReader();
+
+    app.append(
+      el("button", { class: "link", type: "button", style: "padding-left:0", text: "← Retour au jeu", onclick: goHome }),
+      el("h1", { style: "margin-top:0.75rem", text: "Espace parents" }),
+
+      el("section", { class: "panel" }, [
+        el("h2", { text: "Où en est l'enfant ?" }),
+        el("div", { class: "stats", style: "margin:0 0 1rem" }, [
+          el("div", { class: "stat" }, [
+            el("span", { class: "value", text: masteredTotal + "/" + wordTotal }),
+            el("span", { class: "label", text: "mots acquis" }),
+          ]),
+          el("div", { class: "stat" }, [
+            el("span", { class: "value", text: String(knownWordCount()) }),
+            el("span", { class: "label", text: "mots rencontrés" }),
+          ]),
+          el("div", { class: "stat" }, [
+            el("span", { class: "value", text: totalStars() + "/" + THEMES.length * 3 }),
+            el("span", { class: "label", text: "étoiles" }),
+          ]),
+        ]),
+        el("div", {}, THEMES.map((theme) => {
+          const acquired = theme.words.filter((w) => wordState(w.id).box >= MASTERED_BOX).length;
+          return el("div", { class: "row" }, [
+            el("span", { text: theme.emoji + " " + theme.fr }),
+            el("span", { class: "num", text: acquired + "/" + theme.words.length + " mots · " + themeStars(theme) + " ⭐" }),
+          ]);
+        })),
+      ]),
+
+      el("section", { class: "panel" }, [
+        el("h2", { text: "Réglages" }),
+        el("label", { for: "child-name", style: "font-weight:800", text: "Prénom de l'enfant" }),
+        el("input", {
+          id: "child-name", type: "text", maxlength: "20", value: progress.name,
+          placeholder: "Par exemple : Lina",
+          oninput: (event) => { progress.name = event.target.value; saveProgress(); },
+        }),
+        el("p", { style: "font-weight:800;margin-top:1.25rem", text: "L'enfant sait-il lire ?" }),
+        el("p", { class: "soft", style: "font-size:0.9375rem", text: "Si non, les exercices écrits sont remplacés par des exercices d'écoute et d'images." }),
+        readerPair,
+      ]),
+
+      el("section", { class: "panel" }, [
+        el("h2", { text: "Le son" }),
+        el("p", { html: "L'application utilise la voix néerlandaise installée sur l'appareil. Touchez le bouton pour vérifier : vous devez entendre «&nbsp;<em>de hond</em>&nbsp;» prononcé en néerlandais." }),
+        el("button", {
+          class: "primary", type: "button", style: "margin-top:1rem", text: "🔊 Tester le son",
+          onclick: () => { speak("de hond"); showVoiceStatus(); },
+        }),
+        soundNotice,
+      ]),
+
+      el("section", { class: "panel" }, [
+        el("h2", { text: "Comment ça marche" }),
+        el("p", { text: "Chaque mot est rangé dans une « boîte », de 0 à 5. Une bonne réponse le fait monter d'une boîte, une erreur le fait redescendre. Plus la boîte est haute, plus le mot met de temps à revenir : 1 jour, 2 jours, 4, 8, puis 3 semaines. L'enfant révise donc surtout ce qu'il ne sait pas encore." }),
+        el("p", { text: "Une leçon dure environ 5 minutes et travaille 8 mots, dont 4 nouveaux au maximum. Un mot raté revient tout de suite après, sous une forme plus facile : l'enfant ne termine jamais sur un échec." }),
+        el("p", { text: "Une régularité de 5 minutes par jour vaut bien mieux qu'une heure le dimanche. C'est à ça que sert la petite flamme 🔥 sur la page d'accueil." }),
+      ]),
+
+      el("section", { class: "panel" }, [
+        el("h2", { text: "Vos données" }),
+        el("p", { text: "Rien ne quitte cet appareil. La progression est enregistrée dans le navigateur : il n'y a ni compte, ni mot de passe, ni serveur. En contrepartie, la progression ne suit pas d'un appareil à l'autre, et effacer l'historique du navigateur l'efface aussi." }),
+        resetZone,
+      ])
+    );
+  }
+
+  /* ============================================================
+     DÉMARRAGE
+     ============================================================ */
+  progress = loadProgress();
+  render();
+</script>
