@@ -1,0 +1,219 @@
+/*
+  L'APPARENCE DE L'APPLICATION POUR ENFANTS.
+
+  Tout est volontairement séparé du reste du site : couleurs vives,
+  grands boutons arrondis, aucune police fine. Un enfant doit pouvoir
+  viser un bouton avec un doigt, sans précision.
+
+  Pour changer une couleur, modifiez une valeur dans le bloc `.leren`
+  ci-dessous : elle est utilisée partout dans l'application.
+*/
+
+.leren {
+  --leren-bg: #fff8ee;
+  --leren-ink: #2c2440;
+  --leren-ink-soft: #6b6383;
+  --leren-card: #ffffff;
+  --leren-line: #e7ded3;
+  --leren-good: #22a06b;
+  --leren-good-soft: #dcf5e9;
+  --leren-bad: #e0574a;
+  --leren-bad-soft: #fde5e2;
+  --leren-accent: #6c4ce0;
+  --leren-star: #f6b93b;
+
+  background: var(--leren-bg);
+  color: var(--leren-ink);
+  min-height: 100vh;
+  /* Empêche la sélection accidentelle de texte quand l'enfant tapote vite. */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Les couleurs de chaque thème (voir `color` dans vocabulary.ts). */
+.leren-rose   { --t: #f472b6; --t-soft: #fce7f3; }
+.leren-amber  { --t: #f59e0b; --t-soft: #fef3c7; }
+.leren-green  { --t: #4ca94c; --t-soft: #dcf5dc; }
+.leren-red    { --t: #ef4444; --t-soft: #fee2e2; }
+.leren-orange { --t: #f97316; --t-soft: #ffedd5; }
+.leren-pink   { --t: #ec6ea8; --t-soft: #fce4ef; }
+.leren-brown  { --t: #a97155; --t-soft: #f3e6df; }
+.leren-blue   { --t: #3b82f6; --t-soft: #dbeafe; }
+.leren-purple { --t: #8b5cf6; --t-soft: #ede9fe; }
+.leren-sky    { --t: #38bdf8; --t-soft: #e0f2fe; }
+.leren-teal   { --t: #14b8a6; --t-soft: #ccfbf1; }
+
+/* ---------------------------------------------------------------- */
+/* Cartes de thème sur la page d'accueil                             */
+/* ---------------------------------------------------------------- */
+
+.leren-theme-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border-radius: 1.75rem;
+  border: 3px solid var(--t);
+  background: var(--t-soft);
+  color: var(--leren-ink);
+  text-align: left;
+  box-shadow: 0 5px 0 var(--t);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.leren-theme-card:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--t);
+}
+
+/* ---------------------------------------------------------------- */
+/* Boutons de réponse                                                */
+/* ---------------------------------------------------------------- */
+
+.leren-choice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 1.5rem;
+  border: 3px solid var(--leren-line);
+  background: var(--leren-card);
+  color: var(--leren-ink);
+  font-weight: 700;
+  box-shadow: 0 5px 0 var(--leren-line);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.leren-choice:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--leren-line);
+}
+
+.leren-choice-good {
+  border-color: var(--leren-good);
+  background: var(--leren-good-soft);
+  box-shadow: 0 5px 0 var(--leren-good);
+  animation: leren-pop 0.3s ease;
+}
+
+.leren-choice-bad {
+  border-color: var(--leren-bad);
+  background: var(--leren-bad-soft);
+  box-shadow: 0 5px 0 var(--leren-bad);
+  animation: leren-shake 0.35s ease;
+}
+
+/* Les choix non retenus s'effacent pour ne pas distraire. */
+.leren-choice-dim {
+  opacity: 0.35;
+}
+
+/* Le gros bouton d'action (Commencer, Continuer...). */
+.leren-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  border-radius: 999px;
+  background: var(--leren-accent);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.25rem;
+  box-shadow: 0 5px 0 #4a2fb0;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.leren-primary:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 #4a2fb0;
+}
+
+.leren-primary-good {
+  background: var(--leren-good);
+  box-shadow: 0 5px 0 #157a4f;
+}
+
+.leren-primary-good:active {
+  box-shadow: 0 1px 0 #157a4f;
+}
+
+/* ---------------------------------------------------------------- */
+/* Le bouton haut-parleur                                            */
+/* ---------------------------------------------------------------- */
+
+.leren-speaker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--leren-accent);
+  color: #fff;
+  box-shadow: 0 4px 0 #4a2fb0;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.leren-speaker:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #4a2fb0;
+}
+
+/* ---------------------------------------------------------------- */
+/* Barre de progression de la leçon                                  */
+/* ---------------------------------------------------------------- */
+
+.leren-bar {
+  height: 1rem;
+  border-radius: 999px;
+  background: #ece3d6;
+  overflow: hidden;
+}
+
+.leren-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--leren-good);
+  transition: width 0.35s ease;
+}
+
+/* ---------------------------------------------------------------- */
+/* Animations                                                        */
+/* ---------------------------------------------------------------- */
+
+@keyframes leren-pop {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.07); }
+  100% { transform: scale(1); }
+}
+
+@keyframes leren-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-7px); }
+  50% { transform: translateX(7px); }
+  75% { transform: translateX(-4px); }
+}
+
+@keyframes leren-bounce-in {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+.leren-appear {
+  animation: leren-bounce-in 0.35s ease;
+}
+
+/* Respect des préférences système : pas d'animation si l'utilisateur
+   a demandé à les réduire. */
+@media (prefers-reduced-motion: reduce) {
+  .leren *,
+  .leren *::before,
+  .leren *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
